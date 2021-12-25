@@ -6,7 +6,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+from selenium.webdriver.common.action_chains import ActionChains
+from time import sleep
 
 facebook_username = "your email"
 facebook_password = "your password"
@@ -54,12 +55,11 @@ wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="o-1335420887"]/div/di
 if wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="o-1335420887"]/div/div/div/div[3]/button[2]/span'))):
     driver.find_element(By.XPATH, '//*[@id="o-1335420887"]/div/div/div/div[3]/button[2]/span').click()
 
+sleep(2)
+    
 # swipe until u r out of likes
 have_likes = True
 while have_likes:
-    # clicks on the like button
-    wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="o-1556761323"]/div/div[1]/div/main/div[1]/div/div/div[1]/div[1]/div/div[4]/div/div[4]/button'))).click()
-
     try:
         # checks if u r out of likes
         if WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="o-1335420887"]/div/div/div[3]/button[2]'))):
@@ -67,12 +67,19 @@ while have_likes:
             have_likes = False
         else:
             continue
+        # add tinder to home screen reject
+        WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="o-1335420887"]/div/div/div[2]/button[2]/span'))).click()
 
         # if there is a match will press ok and will continue to swipe (idk if it works cause i didn't got a match)
         if WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.itsAMatch a'))):
             driver.find_element(By.CSS_SELECTOR, '.itsAMatch a').click()
     except TimeoutException:
         pass
+
+    # clicks on the like button
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.ARROW_RIGHT)
+    actions.perform()
 
 
 driver.quit()
